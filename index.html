@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+</head>
+
+<body onload="getCurrentLocation()">
+
+    <div class="all" id="all">
+        <div class="container border shadow mt-5 border-1">
+            <div class="all">
+                <div id="loadingDiv"></div>
+            </div>
+            <h4 class="text-center">WEATHER APPLICATION</h4>
+            <input type="text"  placeholder="search location" class="mt-5  " id="city" onkeydown="weatherNote()">
+            <div class="contain">
+                <div class="">
+                    <div id="tem" class="text-dark"></div>
+                    <span>
+                        <p class="text-light" id="cityNam"></p>
+                        <p id="destr" class="text-light fs-5"></p>
+                        <div id="locate" class="text-dark"></div>
+                        <div id="degree" class="text-dark"></div>
+
+                    </span>
+                </div>
+                <h4 class="text-center">Weather Details</h4>
+                <div class="larg border shadow border-1 col-6 mx-auto">
+                    <div class="d-flex justify-content-between mt-1  pb-3 px-4 py-3 text-light">
+                        <span class="text-dark">Location</span>
+                        <p id="cityName" class="text-dark"></p>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1  pb-3 px-4 py-3 text-light">
+                        <span class="text-dark">Humidity</span>
+                        <p id="hum" class="text-dark"> </p>
+
+                    </div>
+                    <div class="d-flex justify-content-between mt-1  pb-3 px-4 py-3 text-light">
+                        <span class="text-dark">Weather</span>
+                        <p id="wed" class="text-dark"> </p>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1  pb-3 px-4 py-3 text-light">
+                        <span class="text-dark"> Description</span>
+                        <p id="des" class="text-dark"></p>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-1  pb-3 px-4 py-3 text-light">
+                        <span class="text-dark"> Pressure</span>
+                        <p id="pres" class="text-dark"></p>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-1  pb-3 px-4 py-3 done text-light">
+                        <span> Wind</span>
+                        <p id="wind" class="text-dark"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+     
+    </div>
+    </div>
+    </div>
+
+
+    <script>
+        const weatherNote = async () => {
+            let endPoint = "6a799a3c98711910ee49517e86cd8736"
+            let search = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&appid=${endPoint}`
+            let response = await fetch(search)
+            let data = await response.json()
+            console.log(data)
+
+            cityName.innerHTML = `${data.name}, ${data.sys.country}`
+            cityNam.innerHTML = `${data.name},${data.sys.country}`
+            hum.innerHTML = `${data.main.humidity}%`
+            tem.innerHTML = `${Number(Math.round(data.main.temp)) - 273}℃`
+            wed.innerHTML = `${data.weather[0].main}`
+            des.innerHTML = `${data.weather[0].description}`
+            destr.innerHTML = `${data.weather[0].description}`
+            pres.innerHTML = `${data.main.pressure} hPa`
+            wind.innerHTML = `${data.wind.speed} m/s`
+            setTimeout((weatherNote) => {
+                city.value = ""
+
+            }, 5000)
+
+        }
+        const getCurrentLocation = () => {
+            // loadingDiv.innerHTML = `<img src="./image/loading2.gif" alt="">`
+
+            navigator.geolocation.getCurrentPosition((currentLocation) => {
+                let endPoint = "6a799a3c98711910ee49517e86cd8736"
+                console.log(currentLocation)
+                let lati = currentLocation.coords.latitude;
+                let long = currentLocation.coords.longitude;
+                console.log(lati, long)
+                let endPoint4 = `https://api.openweathermap.org/data/2.5/weather?lat=${lati}&lon=${long}&appid=${endPoint}`
+                // console.log(location)
+
+                fetch(endPoint4)
+                    .then((geoResponse) => geoResponse.json())
+                    .then((convertedGeolocation) => {
+                        loadingDiv.innerHTML = ""
+                        console.log(convertedGeolocation)
+                        locate.innerHTML = `<div style='font-size:30px;font-weight:700;color:white;'>Current Location <br> ${convertedGeolocation.name}</div>`
+                        degree.innerHTML = `<div style='font-size:30px;font-weight:700;color:white;'> ${Number(Math.round(convertedGeolocation.main.temp)) - 273}℃ </div>`
+
+                    })
+            })
+        }
+
+    </script>
+</body>
+
+</html>
